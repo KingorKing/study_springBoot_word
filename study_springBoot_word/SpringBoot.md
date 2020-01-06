@@ -13,7 +13,7 @@ public @interface SpringBootApplication {
 ```
 
 ***@SpringBootConfiguration: Spring Boot的配置类***
-标注在某个类上，表示这是一个SpringBoot配置类
+标注在某个类上，表示这是一个SpringBoot配置类 1
 
 @Configuration：配置类上来注释这个注解
 
