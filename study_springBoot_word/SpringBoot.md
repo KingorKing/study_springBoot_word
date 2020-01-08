@@ -258,3 +258,96 @@ xxxProperties:封装配置文件中相关属性
 
 
 
+**自动配置类必须在一定的条件下才会配置**
+
+可以通过debug=true 可以让控制台打印配置报告，这样就可以很方便的看到哪些自动配置类生效
+
+
+
+### 日志
+
+JDBC--数据库驱动的关系
+
+写一个统一的接口层；日志门面（欸之的一个抽象层）；logging-abstract。jar
+
+市面上的日志框架
+
+
+
+| 日志门面（日志的抽象层）                                     | 日志的实现                                             |
+| ------------------------------------------------------------ | ------------------------------------------------------ |
+| ~~JCL（jakarta Commons Logging）~~、SLF4j（Simple Logging Facade for Java）、~~jboss-logging~~ | ~~log4j~~、~~JUL（java.util.logging）~~logback、log4j2 |
+
+左边选一个门面（抽象层）、右边来选一个实现
+
+SpringBoot:底层是Spring框架，Spring框架默认是用JCL
+
+​		==**SpringBoot选用SLF4j和logback**==
+
+### SLF4j使用
+
+**1、如何在系统中使用SLF4j**
+
+调用日志 抽象层的方法;    (官方文档中使用教程)
+
+应该先导入slf4j的jar包 和logback的实现jar
+
+```java
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class HelloWorld {
+  public static void main(String[] args) {
+    Logger logger = LoggerFactory.getLogger(HelloWorld.class);
+    logger.info("Hello World");
+  }
+}
+```
+
+![images/SpringBoot日志](D:\git_library\study_springBoot_word\images\SpringBoot日志.png)
+
+每一个日志的实现框架都有子级的配置文件，使用slf4j以后，**配置文件还是做成日志实现框架自己本身的配置文件**
+
+
+
+统一日志记录，即使是别的框架和我一起统一使用Slf4j进行输出
+
+有时候开发应用是可能用到一些别的框架，别的框架使用的日志框架可能会不统一，那就先剔除掉把接口统一
+
+如何让系统中所有的日志都统一到slf4j：
+
+1、将系统中其他日志框架先排除出去
+
+2、用中间包来替换原有的日志框架；
+
+3、导入slf4j其他的实现
+
+```xml
+  <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+  </dependency>
+```
+
+SpringBoot 使用它来做日志功能
+
+```xml
+ <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-logging</artifactId>
+ </dependency>
+```
+
+![](D:\git_library\study_springBoot_word\images\springboot中的日志框架配置.png)
+
+1）SpringBoot底层也是使用Slf4j+logback的方式进行日志记录
+
+2）SpringBoot也罢其他日志都替换成SlF4j
+
+3)中间替换包
+
+4）SpringBoot在引入其他框架时，要剔除默认的日志依赖移除掉
+
+​		Spring框架用的时Commons-logging
+
+​		==**SpringBoot能自动适配所有的日志，而且底使用slf4j+logback的方式记录，在引入其他框架时，只需要移除这个框架依赖的日志框架**==
